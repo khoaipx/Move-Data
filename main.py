@@ -1,7 +1,6 @@
 import os
-import sys
 import shutil
-import platform
+import argparse
 
 
 ALT_SEPARATOR = '$'
@@ -45,15 +44,19 @@ def convert(src, dst, log):
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Move Data')
+    parser.add_argument('-s', '--src', required=True, help='Source folder')
+    parser.add_argument('-d', '--dst', required=True, help='Destination folder')
+    parser.add_argument('-m', '--mode', default='transform', help='Mode: transform/convert')
+    parser.add_argument('-e', '--ext', default='all', help='File extension')
+    parser.add_argument('-l', '--list', default=None, help='list')
+
+    args = parser.parse_args()
     src = '/home/khoaipx/chatbot_log'
     dst = '/home/khoaipx/proj'
     mode = ''
     # transform('/home/khoaipx/chatbot_log', '/home/khoaipx/proj/test', None)
     # convert('/home/khoaipx/proj/test', '/home/khoaipx/proj/test2', None)
-    print sys.platform
-    print os.name
-    print platform.version()
-    print os.pathsep
 
 
 if __name__ == '__main__':
