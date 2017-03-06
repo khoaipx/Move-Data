@@ -140,11 +140,27 @@ function analysis_error_btn_Callback(hObject, eventdata, handles)
 
 cla();
 y_noise = handles.y + handles.noise;
-y_noise_filtered = medfilt1(y_noise);
-% plot(handles.sum_axes,handles.n,y_noise_filtered);
-% histogram(handles.func1_axes,y_noise_filtered);
-snr(handles.y, y_noise_filtered)
-grid on
+SNR1 = [];
+for i = 1:100
+    y_noise_filtered = medfilt1(y_noise, i);
+    error_snr = snr(handles.y, y_noise_filtered);
+    SNR1=[SNR1 error_snr];
+end
+
+SNR2 = [];
+noise = rand(1,length(handles.n))
+for i = 1:0.1:10
+    y = i*sin(3*handles.n) + i*sin(2*handles.n);
+    y_noise = y + noise;
+    y_noise_filtered = medfilt1(y_noise, 5);
+    error_snr = snr(y, y_noise_filtered);
+    SNR2 = [SNR2 error_snr];
+end
+
+plot(handles.func1_axes, SNR1);
+title(handles.func1_axes, 'SNR and order of median filter');
+plot(handles.func2_axes, SNR2);
+title(handles.func2_axes, 'SNR depend A1, A2');
 
 
 % --- Executes on button press in cmp_hist_btn.
@@ -176,29 +192,26 @@ y3 = handles.A1*sin(2*(4*handles.n)) + handles.A2*sin((4*handles.n) + 5);
 % x4(n) = x(-n-20)
 y4 = handles.A1*sin(2*(-handles.n - 20)) + handles.A2*sin((-handles.n - 20) + 5);
 hold on
+cla();
 if handles.cnt==0
-    cla();
     plot(handles.sum_axes,handles.n,handles.y,'b-');
     plot(handles.sum_axes,handles.n,y1,'r-');
     legend(handles.sum_axes,'y = x(n)','y = x(n-20)')
     handles.cnt=1;
     guidata(hObject, handles);
 elseif handles.cnt==1
-    cla();
     plot(handles.sum_axes,handles.n,handles.y,'b-');
     plot(handles.sum_axes,handles.n,y2,'r-');
     legend(handles.sum_axes,'y = x(n)','y = x(n+20)')
     handles.cnt=2;
     guidata(hObject, handles);
 elseif handles.cnt==2
-    cla();
     plot(handles.sum_axes,handles.n,handles.y,'b-');
     plot(handles.sum_axes,handles.n,y3,'r-');
     legend(handles.sum_axes,'y = x(n)','y = x(4n)')
     handles.cnt=3;
     guidata(hObject, handles);
 elseif handles.cnt==3
-    cla();
     plot(handles.sum_axes,handles.n,handles.y,'b-');
     plot(handles.sum_axes,handles.n,y4,'r-');
     legend(handles.sum_axes,'y = x(n)','y = x(-n-20)')
